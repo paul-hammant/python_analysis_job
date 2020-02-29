@@ -9,7 +9,7 @@ import sys
 
 import editdistance
 from colorama import Fore, Style
-from graphviz import Digraph
+from graphviz import Graph
 
 
 whitespace_regex = re.compile(r"\s+", re.MULTILINE)
@@ -80,12 +80,14 @@ def main():
 
     all = list(itertools.combinations(files, 2))
     with multiprocessing.Pool(args.threads) as pool:
-        dot = Digraph(comment='levenshtein distance', format='png')
+        dot = Graph(comment='levenshtein distance', format='png')
         all_edges = []
-        for i, j, ans, perc in pool.imap_unordered(check, all):
+        for i, j, ans, perc in pool.imap_unordered(check, all):            
             print_result(i, j, ans, perc, args.loyola)
             if perc >= args.threshold:
                 l = []
+                i = i.replace(args.input, "")
+                j = j.replace(args.input, "")
                 l.append(i)
                 l.append(j)
                 all_edges.append(l)
