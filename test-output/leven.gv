@@ -1,0 +1,7 @@
+// levenshtein distance
+digraph {
+	"data/bbbb.txt" -> "data/aaaa.txt"
+	"data/bbbb.txt" -> "data/cccc.txt"
+	"data/ddd.txt" -> "data/eee.txt"
+	"data/aaaa.txt" -> "data/cccc.txt"
+}
