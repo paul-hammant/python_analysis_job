@@ -26,8 +26,11 @@ def check(i):
         return
     str1 = remove_whitespace(fc1)
     str2 = remove_whitespace(fc2)
-    ans = editdistance.eval(str1, str2)
-    perc = min(ans / len(str1), ans / len(str2))
+    ans = editdistance.eval(str1, str2) # assuming this is correct
+    bigger = max(len(str1), len(str2))
+    # perc = min(ans / len(str1), ans / len(str2))
+    perc = (bigger- ans) / bigger # assuming this is correct
+
     return [fn1, fn2, ans, perc]
 
 
@@ -78,19 +81,17 @@ def main():
     all = list(itertools.combinations(files, 2))
     with multiprocessing.Pool(args.threads) as pool:
         dot = Digraph(comment='levenshtein distance', format='png')
+        all_edges = []
         for i, j, ans, perc in pool.imap_unordered(check, all):
-            if perc > args.threshold:
-                print_result(i, j, ans, perc, args.loyola)
-                x = str(ans)
-                y = str(perc)
-                dot.edge(j,i)
-            else:
-                print_result(i, j, ans, perc, args.loyola)
-                x = str(ans)
-                y = str(perc)
-                dot.edge(i, j)
+            print_result(i, j, ans, perc, args.loyola)
+            if perc >= args.threshold:
+                l = []
+                l.append(i)
+                l.append(j)
+                all_edges.append(l)
+                dot.edge(i, j) #just create an edge between the two
 
-
+        print(all_edges) # list of all edges
     dot.render('test-output/leven.gv', view=True)  
     pool.join()
 
